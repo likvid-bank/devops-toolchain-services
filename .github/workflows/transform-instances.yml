@@ -1,0 +1,43 @@
+name: transform instances
+concurrency: update_instances
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - .github/workflows/transform-instances.yml
+      - .github/pipeline.ymltpl
+      - instances/**/instance.yml
+      - instances/**/binding.yml
+      - templates/**.tftpl
+      - modules/**.tf
+      - main.tf
+      - service.*.tf
+
+jobs:
+  transform_instances:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hashicorp/setup-terraform@v1
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }} # We need to provide a PAT, because the default `${{ github.token }}` can not be assigned `workflows` permissions. See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+      - name: configure git user
+        run: |
+          git config --global user.email "bot@likvid.meshstack.io"
+          git config --global user.name "Cloud Foundation bot"
+      - name: run terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      - name: commit and push
+        run: |
+          git checkout main
+          git add .
+          git diff-index --quiet HEAD -- || git commit -m "transform instances"
+          git push
