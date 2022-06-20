@@ -40,4 +40,5 @@ jobs:
           git checkout main
           git add .
           git diff-index --quiet HEAD -- || git commit -m "transform instances"
+          git pull --rebase
           git push
