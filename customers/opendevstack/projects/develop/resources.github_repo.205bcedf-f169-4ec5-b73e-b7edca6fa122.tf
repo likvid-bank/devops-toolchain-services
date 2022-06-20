@@ -2,7 +2,7 @@ module "github_repo_binding_status_205bcedf-f169-4ec5-b73e-b7edca6fa122" {
   source   = "../../../../modules/status"
   
   instances_dir = "${path.cwd}/../../../../instances"
-  binding      = {"bindResource":{"platform":"gcp.gcp-meshstack-dev","tenant_id":"opendevstack-develop-9gj"},"bindingId":"205bcedf-f169-4ec5-b73e-b7edca6fa122","context":{"auth_url":null,"customer_id":"opendevstack","permission_url":null,"platform":"meshmarketplace","project_id":"develop","token_url":null},"deleted":false,"originatingIdentity":{"platform":"meshmarketplace","user_euid":"fzieger@meshcloud.io","user_id":"75606cd5-2251-4134-9e46-1604f001312b"},"parameters":{},"planId":"B17F389D-7ECD-4522-98AF-5E2289B68A97","serviceDefinitionId":"E1A838DE-AA9C-4DED-A23C-24824BC1B192","serviceInstanceId":"ff52aa26-9393-4021-91e4-e0a9c6c1343e"}
+  binding      = {"bindResource":{"platform":"gcp.gcp-meshstack-dev","tenant_id":"opendevstack-develop-9gj"},"bindingId":"205bcedf-f169-4ec5-b73e-b7edca6fa122","context":{"auth_url":null,"customer_id":"opendevstack","permission_url":null,"platform":"meshmarketplace","project_id":"develop","token_url":null},"deleted":false,"originatingIdentity":{"platform":"meshmarketplace","user_euid":"fzieger@example.com","user_id":"75606cd5-2251-4134-9e46-1604f001312b"},"parameters":{},"planId":"B17F389D-7ECD-4522-98AF-5E2289B68A97","serviceDefinitionId":"E1A838DE-AA9C-4DED-A23C-24824BC1B192","serviceInstanceId":"ff52aa26-9393-4021-91e4-e0a9c6c1343e"}
   success       = true
   description   = "Updated binding successfully"
 }
