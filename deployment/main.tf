@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/google"
       version = "4.15.0"
     }
+    azuread = {
+      source = "hashicorp/azuread"
+      version = "2.24.0"
+    }
   }
 }
 
@@ -17,6 +21,10 @@ provider "github" {
 
 provider "google" {
   project = "opendevstack-develop-9gj"
+}
+
+provider "azuread" {
+  tenant_id = "703c8d27-13e0-4836-8b2e-8390c588cf80" # meshcloud-dev
 }
 
 locals {
@@ -59,7 +67,7 @@ resource "github_repository_deploy_key" "unipipe-ssh-key" {
 resource "google_service_account" "pipeline_service_account" {
   project       = local.project_id
   account_id   = "unipipe"
-  display_name = "UniPipe Demo Pipeline Service Account"
+  display_name = "UniPipe Pipeline Service Account"
   description  = "Used by unipipe to provision on GCP."
 }
 
@@ -85,4 +93,44 @@ resource "github_actions_secret" "gcp_service_account" {
   repository      = github_repository.instance_repository.name
   secret_name     = "GOOGLE_CREDENTIALS"
   plaintext_value = base64decode(google_service_account_key.pipeline_service_account_key.private_key)
+}
+
+# This Service Principal is used by the pipeline for managing resources on Azure.
+resource "azuread_application" "pipeline_application" {
+  display_name = "UniPipe Pipeline Application"
+
+  web {
+    implicit_grant {
+      access_token_issuance_enabled = false
+    }
+  }
+
+}
+
+resource "azuread_service_principal" "pipeline_service_principal" {
+  application_id = azuread_application.pipeline_application.application_id
+}
+
+resource "azuread_service_principal_password" "pipeline_service_principal_pw" {
+  service_principal_id = azuread_service_principal.pipeline_service_principal.id
+  end_date             = "2999-01-01T01:02:03Z" # no expiry
+}
+
+resource "github_actions_secret" "arm_client_id" {
+  repository      = github_repository.instance_repository.name
+  secret_name     = "ARM_CLIENT_ID"
+  plaintext_value = azuread_service_principal.pipeline_service_principal.id
+}
+
+resource "github_actions_secret" "arm_client_secret" {
+  repository      = github_repository.instance_repository.name
+  secret_name     = "ARM_CLIENT_SECRET"
+  plaintext_value = azuread_service_principal_password.pipeline_service_principal_pw.value
+
+}
+
+resource "github_actions_secret" "arm_tenant_id" {
+  repository      = github_repository.instance_repository.name
+  secret_name     = "ARM_TENANT_ID"
+  plaintext_value = "703c8d27-13e0-4836-8b2e-8390c588cf80" # meshcloud-dev
 }
