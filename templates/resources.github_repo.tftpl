@@ -13,7 +13,7 @@ provider "github" {
 }
 
 resource "github_repository" "managed" {
-  name        = "${jsondecode(binding).context.customer_id}-${jsondecode(binding).context.project_id}-${parameters.repositoryName}"
+  name        = "${jsondecode(binding).context.customer_id}-${jsondecode(binding).context.project_id}-${parameters.repository}"
   description = "Infrastructure repository for project ${jsondecode(binding).context.project_id} of customer ${jsondecode(binding).context.customer_id}."
 
   gitignore_template = "Terraform"
