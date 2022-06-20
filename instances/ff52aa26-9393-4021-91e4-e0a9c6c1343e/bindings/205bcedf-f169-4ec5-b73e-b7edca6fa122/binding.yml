@@ -1,0 +1,21 @@
+---
+bindingId: "205bcedf-f169-4ec5-b73e-b7edca6fa122"
+serviceInstanceId: "ff52aa26-9393-4021-91e4-e0a9c6c1343e"
+serviceDefinitionId: "E1A838DE-AA9C-4DED-A23C-24824BC1B192"
+planId: "B17F389D-7ECD-4522-98AF-5E2289B68A97"
+originatingIdentity: !<PlatformContext>
+  platform: "meshmarketplace"
+  user_id: "75606cd5-2251-4134-9e46-1604f001312b"
+  user_euid: "fzieger@meshcloud.io"
+parameters: {}
+bindResource:
+  tenant_id: "opendevstack-develop-9gj"
+  platform: "gcp.gcp-meshstack-dev"
+context: !<PlatformContext>
+  platform: "meshmarketplace"
+  permission_url: null
+  project_id: "develop"
+  auth_url: null
+  customer_id: "opendevstack"
+  token_url: null
+deleted: false
