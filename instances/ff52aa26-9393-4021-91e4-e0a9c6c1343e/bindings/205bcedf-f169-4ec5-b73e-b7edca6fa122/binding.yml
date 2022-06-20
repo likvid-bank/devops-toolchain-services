@@ -6,7 +6,7 @@ planId: "B17F389D-7ECD-4522-98AF-5E2289B68A97"
 originatingIdentity: !<PlatformContext>
   platform: "meshmarketplace"
   user_id: "75606cd5-2251-4134-9e46-1604f001312b"
-  user_euid: "fzieger@meshcloud.io"
+  user_euid: "fzieger@example.com"
 parameters: {}
 bindResource:
   tenant_id: "opendevstack-develop-9gj"
