@@ -81,8 +81,8 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
-          workload_identity_provider: $${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: $${{ secrets.GCP_SERVICE_ACCOUNT }}
+          workload_identity_provider: $$${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: $$${{ secrets.GCP_SERVICE_ACCOUNT }}
       - run: terraform init
       - run: terraform apply -auto-approve
       - name: git
