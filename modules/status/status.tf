@@ -13,11 +13,6 @@ variable "binding" {
   default  = null
 }
 
-#   validation {
-#     condition     = (var.instance == null && var.binding != null) || (var.instance == null && var.binding != null)
-#     error_message = "Either instance or binding must be specified."
-#   }
-
 variable "success" {
   type = bool
 }
