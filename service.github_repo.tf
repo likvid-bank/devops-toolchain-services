@@ -6,11 +6,21 @@ module "github_repo" {
 }
 
 resource "local_file" "github_repo" {
-  for_each = module.github_repo.bindings.not_deleted
+  for_each = module.github_repo.instances.not_deleted
 
   content = templatefile("./templates/resources.github_repo.tftpl", {
+    parameters   = each.value.parameters
+    instance = jsonencode(each.value)
+  })
+  filename = "./customers/${each.value.context.customer_id}/projects/${each.value.context.project_id}/resources.github_repo.${each.key}.tf"
+}
+
+resource "local_file" "gcp_integration" {
+  for_each = module.github_repo.bindings.not_deleted
+
+  content = templatefile("./templates/resources.github_repo.gcp_integration.tftpl", {
     parameters   = module.github_repo.instances.all[each.value.serviceInstanceId].parameters
     binding = jsonencode(each.value)
   })
-  filename = "./customers/${each.value.context.customer_id}/projects/${each.value.context.project_id}/resources.github_repo.${each.key}.tf"
+  filename = "./customers/${each.value.context.customer_id}/projects/${each.value.context.project_id}/resources.github_repo.gcp_integration.${each.key}.tf"
 }

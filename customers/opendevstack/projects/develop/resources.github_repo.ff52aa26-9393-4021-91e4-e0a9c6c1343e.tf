@@ -4,8 +4,8 @@ provider "github" {
 }
 
 resource "github_repository" "managed" {
-  name        = "${jsondecode(instance).context.customer_id}-${jsondecode(instance).context.project_id}-${parameters.repository}"
-  description = "Infrastructure repository for project ${jsondecode(instance).context.project_id} of customer ${jsondecode(instance).context.customer_id}."
+  name        = "opendevstack-develop-dev"
+  description = "Infrastructure repository for project develop of customer opendevstack."
 
   gitignore_template = "Terraform"
   auto_init          = true

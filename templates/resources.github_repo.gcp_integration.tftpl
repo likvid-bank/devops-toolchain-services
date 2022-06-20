@@ -1,34 +1,10 @@
-module "github_repo_binding_status_205bcedf-f169-4ec5-b73e-b7edca6fa122" {
+module "github_repo_binding_status_${jsondecode(binding).bindingId}" {
   source   = "../../../../modules/status"
   
-  instances_dir = "${path.cwd}/../../../../instances"
-  binding      = {"bindResource":{"platform":"gcp.gcp-meshstack-dev","tenant_id":"opendevstack-develop-9gj"},"bindingId":"205bcedf-f169-4ec5-b73e-b7edca6fa122","context":{"auth_url":null,"customer_id":"opendevstack","permission_url":null,"platform":"meshmarketplace","project_id":"develop","token_url":null},"deleted":false,"originatingIdentity":{"platform":"meshmarketplace","user_euid":"fzieger@example.com","user_id":"75606cd5-2251-4134-9e46-1604f001312b"},"parameters":{},"planId":"B17F389D-7ECD-4522-98AF-5E2289B68A97","serviceDefinitionId":"E1A838DE-AA9C-4DED-A23C-24824BC1B192","serviceInstanceId":"ff52aa26-9393-4021-91e4-e0a9c6c1343e"}
+  instances_dir = "$${path.cwd}/../../../../instances"
+  binding      = ${binding}
   success       = true
   description   = "Updated binding successfully"
-}
-
-provider "github" {
-  app_auth {}
-  owner = "likvid-bank"
-}
-
-resource "github_repository" "managed" {
-  name        = "opendevstack-develop-dev"
-  description = "Infrastructure repository for project develop of customer opendevstack."
-
-  gitignore_template = "Terraform"
-  auto_init          = true
-
-  visibility = "private"
-  # We would like to use a template, but this is currently not supported for GitHub App Installations
-  # See https://docs.github.com/en/rest/reference/repos#create-a-repository-using-a-template
-  # Workaround: Create files main.tf and .github/workflow/pipeline.yml manually below
-}
-
-locals {
-  commit_message = "Welcome Package by DevOps Toolchain Team"
-  commit_author  = "DevOps Toolchain Team"
-  commit_email   = "devopstoolchain@likvid-bank.com"
 }
 
 resource "github_repository_file" "maintf" {
@@ -81,8 +57,8 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
-          workload_identity_provider: $${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: $${{ secrets.GCP_SERVICE_ACCOUNT }}
+          workload_identity_provider: $$${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: $$${{ secrets.GCP_SERVICE_ACCOUNT }}
       - run: terraform init
       - run: terraform apply -auto-approve
       - name: git
@@ -98,21 +74,21 @@ jobs:
 module "github_actions_sa" {
   source  = "terraform-google-modules/service-accounts/google"
   version = "~> 4.0"
-  project_id = "opendevstack-develop-9gj"
+  project_id = "${jsondecode(binding).bindResource.tenant_id}"
   names        = ["githubactionssa"]
   display_name = "Github Actions SA"
-  project_roles = ["opendevstack-develop-9gj=>roles/owner"]
+  project_roles = ["${jsondecode(binding).bindResource.tenant_id}=>roles/owner"]
 }
 
 module "gh_oidc" {
   source         = "terraform-google-modules/github-actions-runners/google//modules/gh-oidc"
-  project_id     = "opendevstack-develop-9gj"
+  project_id     = "${jsondecode(binding).bindResource.tenant_id}"
   pool_id        = "github-identity-pool"
   provider_id    = "github-identity-provider"
   sa_mapping     = {
     "my_service_account" = {
-      sa_name   = "projects/opendevstack-develop-9gj/serviceAccounts/${module.github_actions_sa.email}"
-      attribute = "attribute.repository/likvid-bank/dev"
+      sa_name   = "projects/${jsondecode(binding).bindResource.tenant_id}/serviceAccounts/$${module.github_actions_sa.email}"
+      attribute = "attribute.repository/likvid-bank/${parameters.repository}"
     }
   }
 }
