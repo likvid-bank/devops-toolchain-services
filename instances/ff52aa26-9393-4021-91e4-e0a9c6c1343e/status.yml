@@ -1,2 +1,3 @@
-"description": "Updated instance successfully"
-"status": "succeeded"
+---
+status: "in progress"
+description: "preparing service deletion"
