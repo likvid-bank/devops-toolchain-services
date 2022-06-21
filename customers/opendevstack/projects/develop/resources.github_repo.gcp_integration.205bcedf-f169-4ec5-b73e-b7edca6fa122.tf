@@ -8,10 +8,10 @@ module "github_repo_binding_status_205bcedf-f169-4ec5-b73e-b7edca6fa122" {
 }
 
 resource "github_repository_file" "maintf" {
-  repository          = github_repository.managed.name
-  commit_message      = local.commit_message
-  commit_author       = local.commit_author
-  commit_email        = local.commit_email
+  repository= github_repository.managed.name
+  commit_message= local.commit_message
+  commit_author= local.commit_author
+  commit_email= local.commit_email
 
   file                = "main.tf"
   content             = <<-EOT
