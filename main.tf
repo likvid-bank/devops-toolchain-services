@@ -55,10 +55,19 @@ module "bindings" {
 }
 
 resource "local_file" "provider_azurerm" {
-  for_each = module.bindings.azure
+  for_each = module.bindings.azure.all
 
   content = templatefile("./templates/provider.azurerm.tftpl", {
     subscription = each.value.bindResource.tenant_id
   })
   filename = "./customers/${each.value.context.customer_id}/projects/${each.value.context.project_id}/provider.azurerm.tf"
+}
+
+resource "local_file" "provider_gcp" {
+  for_each = module.bindings.gcp.all
+
+  content = templatefile("./templates/provider.gcp.tftpl", {
+    project = each.value.bindResource.tenant_id
+  })
+  filename = "./customers/${each.value.context.customer_id}/projects/${each.value.context.project_id}/provider.gcp.tf"
 }
