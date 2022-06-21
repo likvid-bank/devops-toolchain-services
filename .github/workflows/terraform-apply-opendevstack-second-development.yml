@@ -1,0 +1,44 @@
+name: terraform apply for opendevstack second-development
+concurrency: terraform_apply_for_opendevstack_second-development
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "customers/opendevstack/projects/second-development/*.tf"
+      - ".github/workflows/terraform-apply-opendevstack-second-development.yml"
+
+jobs:
+  terraform_apply_for_opendevstack_second-development:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hashicorp/setup-terraform@v2
+      - uses: actions/checkout@v3
+      - name: configure git
+        run: |
+          git config --global user.email "bot@likvid.meshstack.io"
+          git config --global user.name "Cloud Foundation bot"
+          # We may want to source terraform modules from private repositories. 
+          # The default `${{ github.token }}` can not be assigned `repo` permissions on other private repositories.
+          # Therefore we us a PAT for git interactions.
+          git config --global url."https://oauth2:${{ secrets.WORKFLOW_TOKEN }}@github.com".insteadOf https://github.com
+          git config --global url."https://oauth2:${{ secrets.WORKFLOW_TOKEN }}@github.com".insteadOf ssh://git@github.com
+      - run: |
+          cd customers/opendevstack/projects/second-development
+          terraform init
+          terraform apply -auto-approve
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GITHUB_APP_ID : ${{ secrets.GH_GITHUB_APP_ID}}
+          GITHUB_APP_INSTALLATION_ID : ${{ secrets.GH_GITHUB_APP_INSTALLATION_ID}}
+          GITHUB_APP_PEM_FILE: ${{ secrets.GH_GITHUB_APP_PEM_FILE }}k
+      - run: |
+          git checkout main
+          git add .
+          git diff-index --quiet HEAD -- || git commit -m "terraform apply for opendevstack second-development"
+          git pull --rebase
+          git push
