@@ -1,7 +1,7 @@
 module "github_repo_binding_status_${jsondecode(binding).bindingId}" {
   source   = "../../../../modules/status"
   
-  instances_dir = "$${path.cwd}/../../../../instances"
+  instances_dir = "./../../../../instances"
   binding      = ${binding}
   success       = true
   description   = "Updated binding successfully"
