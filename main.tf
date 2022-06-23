@@ -34,6 +34,15 @@ resource "local_file" "backend" {
   filename = "./customers/${each.value}/projects/${each.key}/backend.tf"
 }
 
+# Always create a GitHub provider per project
+resource "local_file" "provider_provider" {
+  for_each = module.instances.projects_to_customer
+
+  content = templatefile("./templates/provider.github.tftpl", {
+  })
+  filename = "./customers/${each.value}/projects/${each.key}/provider.github.tf"
+}
+
 # Always create a pipeline per project
 resource "local_file" "pipeline" {
   for_each = module.instances.projects_to_customer

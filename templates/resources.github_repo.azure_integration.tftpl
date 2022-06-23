@@ -8,7 +8,7 @@ module "github_repo_binding_status_${jsondecode(binding).bindingId}" {
 }
 
 resource "github_repository_file" "maintf" {
-  repository          = github_repository.managed.name
+  repository          = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
   commit_email        = local.commit_email
@@ -31,7 +31,7 @@ provider "azurerm" {
 }
 
 resource "github_repository_file" "pipelineyml" {
-  repository          = github_repository.managed.name
+  repository          = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
   commit_email        = local.commit_email
@@ -94,20 +94,20 @@ resource "azuread_service_principal_password" "pipeline_service_principal_pw" {
 }
 
 resource "github_actions_secret" "arm_client_id" {
-  repository       = github_repository.managed.name
+  repository       = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   secret_name     = "ARM_CLIENT_ID"
   plaintext_value = azuread_service_principal.pipeline_service_principal.id
 }
 
 resource "github_actions_secret" "arm_client_secret" {
-  repository       = github_repository.managed.name
+  repository       = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   secret_name     = "ARM_CLIENT_SECRET"
   plaintext_value = azuread_service_principal_password.pipeline_service_principal_pw.value
 
 }
 
 resource "github_actions_secret" "arm_tenant_id" {
-  repository       = github_repository.managed.name
+  repository       = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   secret_name     = "ARM_TENANT_ID"
   plaintext_value = "703c8d27-13e0-4836-8b2e-8390c588cf80" # meshcloud-dev
 }

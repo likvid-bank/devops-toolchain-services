@@ -8,7 +8,7 @@ module "github_repo_binding_status_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
 }
 
 resource "github_repository_file" "maintf" {
-  repository          = github_repository.managed.name
+  repository          = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
   commit_email        = local.commit_email
@@ -30,7 +30,7 @@ provider "google" {
 }
 
 resource "github_repository_file" "pipelineyml" {
-  repository          = github_repository.managed.name
+  repository          = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
   commit_email        = local.commit_email
@@ -94,13 +94,13 @@ module "gh_oidc" {
 }
 
 resource "github_actions_secret" "gcp_workload_identity_provider" {
-  repository       = github_repository.managed.name
+  repository       = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   secret_name      = "GCP_WORKLOAD_IDENTITY_PROVIDER"
   plaintext_value  = module.gh_oidc.provider_name
 }
 
 resource "github_actions_secret" "gcp_service_account" {
-  repository       = github_repository.managed.name
+  repository       = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   secret_name      = "GCP_SERVICE_ACCOUNT"
   plaintext_value  = module.github_actions_sa.email
 }

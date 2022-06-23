@@ -1,9 +1,4 @@
-provider "github" {
-  app_auth {}
-  owner = "likvid-bank"
-}
-
-resource "github_repository" "managed" {
+resource "github_repository" "managed_aff9e28b-3bff-41ea-b360-3174a3aeb8e4" {
   name        = "opendevstack-develop--ci"
   description = "Infrastructure repository for project develop of customer opendevstack."
 
@@ -16,8 +11,7 @@ resource "github_repository" "managed" {
   # Workaround: Create files main.tf and .github/workflow/pipeline.yml manually (see gcp_integration terraform template)
 }
 
-locals {
-  commit_message = "Welcome Package by DevOps Toolchain Team"
-  commit_author  = "DevOps Toolchain Team"
-  commit_email   = "devopstoolchain@likvid-bank.com"
+moved {
+  from = github_repository.managed
+  to   = github_repository.managed_aff9e28b-3bff-41ea-b360-3174a3aeb8e4
 }
