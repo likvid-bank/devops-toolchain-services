@@ -7,7 +7,7 @@ module "github_repo_binding_status_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   description   = "Updated binding successfully"
 }
 
-resource "github_repository_file" "maintf" {
+resource "github_repository_file" "maintf_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   repository          = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
@@ -29,7 +29,7 @@ provider "google" {
   EOT
 }
 
-resource "github_repository_file" "pipelineyml" {
+resource "github_repository_file" "pipelineyml_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   repository          = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
@@ -71,7 +71,7 @@ jobs:
   EOT
 }
 
-module "github_actions_sa" {
+module "github_actions_sa_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   source  = "terraform-google-modules/service-accounts/google"
   version = "~> 4.0"
   project_id = "opendevstack-second-dev-hk6"
@@ -80,27 +80,52 @@ module "github_actions_sa" {
   project_roles = ["opendevstack-second-dev-hk6=>roles/owner"]
 }
 
-module "gh_oidc" {
+module "gh_oidc_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   source         = "terraform-google-modules/github-actions-runners/google//modules/gh-oidc"
   project_id     = "opendevstack-second-dev-hk6"
   pool_id        = "github-identity-pool"
   provider_id    = "github-identity-provider"
   sa_mapping     = {
     "my_service_account" = {
-      sa_name   = "projects/opendevstack-second-dev-hk6/serviceAccounts/${module.github_actions_sa.email}"
+      sa_name   = "projects/opendevstack-second-dev-hk6/serviceAccounts/${module.github_actions_sa_f6382f6e-a167-49a1-8fb8-d88e5f285611.email}"
       attribute = "attribute.repository/likvid-bank/second-dev"
     }
   }
 }
 
-resource "github_actions_secret" "gcp_workload_identity_provider" {
+resource "github_actions_secret" "gcp_workload_identity_provider_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   repository       = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   secret_name      = "GCP_WORKLOAD_IDENTITY_PROVIDER"
-  plaintext_value  = module.gh_oidc.provider_name
+  plaintext_value  = module.gh_oidc_f6382f6e-a167-49a1-8fb8-d88e5f285611.provider_name
 }
 
-resource "github_actions_secret" "gcp_service_account" {
+resource "github_actions_secret" "gcp_service_account_f6382f6e-a167-49a1-8fb8-d88e5f285611" {
   repository       = github_repository.managed_729d125a-7f11-4109-9a19-4e20c0fa4662.name
   secret_name      = "GCP_SERVICE_ACCOUNT"
-  plaintext_value  = module.github_actions_sa.email
+  plaintext_value  = module.github_actions_sa_f6382f6e-a167-49a1-8fb8-d88e5f285611.email
+}
+
+moved {
+  from = github_repository_file.maintf 
+  to   = github_repository_file.maintf_f6382f6e-a167-49a1-8fb8-d88e5f285611
+}
+moved {
+  from = github_repository_file.pipelineyml 
+  to   = github_repository_file.pipelineyml_f6382f6e-a167-49a1-8fb8-d88e5f285611
+}
+moved {
+  from = module.github_actions_sa
+  to   = module.github_actions_sa_f6382f6e-a167-49a1-8fb8-d88e5f285611
+}
+moved {
+  from = module.gh_oidc
+  to   = module.gh_oidc_f6382f6e-a167-49a1-8fb8-d88e5f285611
+}
+moved {
+  from = github_actions_secret.gcp_workload_identity_provider
+  to   = github_actions_secret.gcp_workload_identity_provider_f6382f6e-a167-49a1-8fb8-d88e5f285611
+}
+moved {
+  from = github_actions_secret.gcp_service_account
+  to   = github_actions_secret.gcp_service_account_f6382f6e-a167-49a1-8fb8-d88e5f285611
 }

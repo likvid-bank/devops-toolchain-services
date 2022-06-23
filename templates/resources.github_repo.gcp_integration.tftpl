@@ -7,7 +7,7 @@ module "github_repo_binding_status_${jsondecode(binding).bindingId}" {
   description   = "Updated binding successfully"
 }
 
-resource "github_repository_file" "maintf" {
+resource "github_repository_file" "maintf_${jsondecode(binding).bindingId}" {
   repository          = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
@@ -29,7 +29,7 @@ provider "google" {
   EOT
 }
 
-resource "github_repository_file" "pipelineyml" {
+resource "github_repository_file" "pipelineyml_${jsondecode(binding).bindingId}" {
   repository          = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   commit_message      = local.commit_message
   commit_author       = local.commit_author
@@ -71,7 +71,7 @@ jobs:
   EOT
 }
 
-module "github_actions_sa" {
+module "github_actions_sa_${jsondecode(binding).bindingId}" {
   source  = "terraform-google-modules/service-accounts/google"
   version = "~> 4.0"
   project_id = "${jsondecode(binding).bindResource.tenant_id}"
@@ -80,27 +80,52 @@ module "github_actions_sa" {
   project_roles = ["${jsondecode(binding).bindResource.tenant_id}=>roles/owner"]
 }
 
-module "gh_oidc" {
+module "gh_oidc_${jsondecode(binding).bindingId}" {
   source         = "terraform-google-modules/github-actions-runners/google//modules/gh-oidc"
   project_id     = "${jsondecode(binding).bindResource.tenant_id}"
   pool_id        = "github-identity-pool"
   provider_id    = "github-identity-provider"
   sa_mapping     = {
     "my_service_account" = {
-      sa_name   = "projects/${jsondecode(binding).bindResource.tenant_id}/serviceAccounts/$${module.github_actions_sa.email}"
+      sa_name   = "projects/${jsondecode(binding).bindResource.tenant_id}/serviceAccounts/$${module.github_actions_sa_${jsondecode(binding).bindingId}.email}"
       attribute = "attribute.repository/likvid-bank/${parameters.repository}"
     }
   }
 }
 
-resource "github_actions_secret" "gcp_workload_identity_provider" {
+resource "github_actions_secret" "gcp_workload_identity_provider_${jsondecode(binding).bindingId}" {
   repository       = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   secret_name      = "GCP_WORKLOAD_IDENTITY_PROVIDER"
-  plaintext_value  = module.gh_oidc.provider_name
+  plaintext_value  = module.gh_oidc_${jsondecode(binding).bindingId}.provider_name
 }
 
-resource "github_actions_secret" "gcp_service_account" {
+resource "github_actions_secret" "gcp_service_account_${jsondecode(binding).bindingId}" {
   repository       = github_repository.managed_${jsondecode(binding).serviceInstanceId}.name
   secret_name      = "GCP_SERVICE_ACCOUNT"
-  plaintext_value  = module.github_actions_sa.email
+  plaintext_value  = module.github_actions_sa_${jsondecode(binding).bindingId}.email
+}
+
+moved {
+  from = github_repository_file.maintf 
+  to   = github_repository_file.maintf_${jsondecode(binding).bindingId}
+}
+moved {
+  from = github_repository_file.pipelineyml 
+  to   = github_repository_file.pipelineyml_${jsondecode(binding).bindingId}
+}
+moved {
+  from = module.github_actions_sa
+  to   = module.github_actions_sa_${jsondecode(binding).bindingId}
+}
+moved {
+  from = module.gh_oidc
+  to   = module.gh_oidc_${jsondecode(binding).bindingId}
+}
+moved {
+  from = github_actions_secret.gcp_workload_identity_provider
+  to   = github_actions_secret.gcp_workload_identity_provider_${jsondecode(binding).bindingId}
+}
+moved {
+  from = github_actions_secret.gcp_service_account
+  to   = github_actions_secret.gcp_service_account_${jsondecode(binding).bindingId}
 }
